@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ИС «Кинотеатр»</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>ИС «Кинотеатр»</h1>
+    <nav>
+      <button class="nav-btn active" data-section="repertoire">Репертуар и сеансы</button>
+      <button class="nav-btn" data-section="tickets">Продажа билетов</button>
+      <button class="nav-btn" data-section="cash">Касса</button>
+      <button class="nav-btn" data-section="reports">Отчётность</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- МОДУЛЬ 1: Репертуар и сеансы -->
+    <section id="repertoire" class="section active">
+      <h2>Репертуар и сеансы</h2>
+
+      <div class="cards">
+        <div class="card">
+          <h3 id="film-form-title">Добавить фильм</h3>
+          <form id="film-form">
+            <input type="hidden" id="edit-film-id" value="">
+            <input type="text" id="film-title" placeholder="Название фильма" required>
+
+            <label class="field-label">Жанры (можно несколько)</label>
+            <div class="genres-grid" id="genres-grid">
+              <label><input type="checkbox" name="genre" value="Боевик"> Боевик</label>
+              <label><input type="checkbox" name="genre" value="Комедия"> Комедия</label>
+              <label><input type="checkbox" name="genre" value="Драма"> Драма</label>
+              <label><input type="checkbox" name="genre" value="Ужасы"> Ужасы</label>
+              <label><input type="checkbox" name="genre" value="Фантастика"> Фантастика</label>
+              <label><input type="checkbox" name="genre" value="Фэнтези"> Фэнтези</label>
+              <label><input type="checkbox" name="genre" value="Триллер"> Триллер</label>
+              <label><input type="checkbox" name="genre" value="Мелодрама"> Мелодрама</label>
+              <label><input type="checkbox" name="genre" value="Приключения"> Приключения</label>
+              <label><input type="checkbox" name="genre" value="Мультфильм"> Мультфильм</label>
+              <label><input type="checkbox" name="genre" value="Детектив"> Детектив</label>
+              <label><input type="checkbox" name="genre" value="Исторический"> Исторический</label>
+              <label><input type="checkbox" name="genre" value="Семейный"> Семейный</label>
+              <label><input type="checkbox" name="genre" value="Документальный"> Документальный</label>
+              <label><input type="checkbox" name="genre" value="Мюзикл"> Мюзикл</label>
+            </div>
+
+            <label class="field-label">Длительность</label>
+            <div class="duration-row">
+              <input type="number" id="film-hours" placeholder="Часы" min="0" max="5" value="1">
+              <span>ч</span>
+              <input type="number" id="film-minutes" placeholder="Минуты" min="0" max="59" value="30">
+              <span>мин</span>
+            </div>
+
+            <label class="field-label">Возрастной рейтинг</label>
+            <select id="film-age">
+              <option value="0+">0+</option>
+              <option value="6+">6+</option>
+              <option value="12+">12+</option>
+              <option value="16+">16+</option>
+              <option value="18+">18+</option>
+            </select>
+
+            <div class="form-actions">
+              <button type="submit" id="film-submit-btn">Добавить фильм</button>
+              <button type="button" id="film-cancel-btn" class="btn-cancel hidden">Отмена</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 id="session-form-title">Добавить сеанс</h3>
+          <form id="session-form">
+            <input type="hidden" id="edit-session-id" value="">
+
+            <label class="field-label">Фильм</label>
+            <select id="session-film" required>
+              <option value="">Выберите фильм</option>
+            </select>
+
+            <label class="field-label">Зал</label>
+            <select id="session-hall" required>
+              <option value="1">Зал 1 (стандарт)</option>
+              <option value="2">Зал 2 (стандарт)</option>
+              <option value="3">Зал VIP</option>
+            </select>
+
+            <label class="field-label">Дата и время</label>
+            <input type="datetime-local" id="session-datetime" required>
+
+            <label class="field-label">Базовая цена билета (руб.)</label>
+            <input type="number" id="session-price" placeholder="Например 350" min="100" value="350" required>
+
+            <div class="form-actions">
+              <button type="submit" id="session-submit-btn">Добавить сеанс</button>
+              <button type="button" id="session-cancel-btn" class="btn-cancel hidden">Отмена</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <h3>Список фильмов</h3>
+      <div id="films-list" class="list"></div>
+
+      <h3>Расписание сеансов</h3>
+      <div class="filter-bar">
+        <label class="field-label">Фильтр по дате</label>
+        <div class="filter-row">
+          <input type="date" id="filter-session-date">
+          <button type="button" id="btn-filter-sessions" class="secondary">Показать</button>
+          <button type="button" id="btn-clear-filter" class="btn-cancel">Сбросить</button>
+        </div>
+      </div>
+      <div id="sessions-list" class="list"></div>
+    </section>
+
+    <!-- МОДУЛЬ 2: Продажа билетов -->
+    <section id="tickets" class="section">
+      <h2>Продажа билетов</h2>
+
+      <div class="card">
+        <label class="field-label">Фильтр по дате</label>
+        <div class="filter-row" style="margin-bottom:0.8rem;">
+          <input type="date" id="filter-ticket-date">
+          <button type="button" id="btn-filter-tickets" class="secondary">Показать</button>
+          <button type="button" id="btn-clear-ticket-filter" class="btn-cancel">Сбросить</button>
+        </div>
+        <label class="field-label">Выберите сеанс</label>
+        <select id="ticket-session">
+          <option value="">— выберите сеанс —</option>
+        </select>
+      </div>
+
+      <div id="hall-info" class="hidden">
+        <div class="cinema-hall">
+          <div class="screen-wrap">
+            <div class="screen">ЭКРАН</div>
+          </div>
+
+          <p class="legend">
+            <span class="seat-demo free"></span> свободно
+            <span class="seat-demo selected"></span> выбрано
+            <span class="seat-demo occupied"></span> занято
+            <span class="seat-demo vip"></span> VIP
+          </p>
+
+          <div id="seats-grid" class="seats-grid"></div>
+        </div>
+
+        <div id="selected-info" class="card hidden" style="margin-top:1.2rem;">
+          <p>Выбрано место: <strong id="selected-seat-text"></strong></p>
+          <p>Стоимость: <strong id="ticket-price">0</strong> руб.</p>
+          <button id="btn-buy">Оформить покупку</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- МОДУЛЬ 3: Касса -->
+    <section id="cash" class="section">
+      <h2>Касса и квитанции</h2>
+
+      <div class="card" style="margin-bottom:1.2rem;">
+        <div class="filter-row" style="margin-bottom:0.8rem;">
+          <div>
+            <label class="field-label">Дата продажи</label>
+            <input type="date" id="filter-cash-date">
+          </div>
+          <div style="flex:1;min-width:180px;">
+            <label class="field-label">Поиск</label>
+            <input type="text" id="filter-cash-search" placeholder="Фильм, зал, место...">
+          </div>
+        </div>
+        <div class="filter-row">
+          <button type="button" id="btn-filter-cash" class="secondary">Применить</button>
+          <button type="button" id="btn-clear-cash-filter" class="btn-cancel">Сбросить</button>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card stat">
+          <h3>Квитанций</h3>
+          <p class="big-number" id="cash-count">0</p>
+        </div>
+        <div class="card stat">
+          <h3>Сумма</h3>
+          <p class="big-number" id="cash-sum">0 ₽</p>
+        </div>
+      </div>
+
+      <div id="receipts-list" class="list"></div>
+      <p id="no-receipts" class="empty">Пока нет продаж</p>
+    </section>
+
+    <!-- Модальное окно печати квитанции -->
+    <div id="print-modal" class="modal hidden">
+      <div class="modal-content" id="print-content">
+        <div class="receipt-paper">
+          <h2>ИС «Кинотеатр»</h2>
+          <p class="receipt-sub">Кассовый чек</p>
+          <hr>
+          <div id="print-body"></div>
+          <hr>
+          <p class="receipt-footer">Спасибо за покупку!</p>
+        </div>
+        <div class="modal-actions no-print">
+          <button type="button" id="btn-do-print" class="secondary">Печать</button>
+          <button type="button" id="btn-close-print" class="btn-cancel">Закрыть</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- МОДУЛЬ 4: Отчётность -->
+    <section id="reports" class="section">
+      <h2>Отчётность</h2>
+
+      <div class="card" style="margin-bottom:1.2rem;">
+        <label class="field-label">Фильтр по дате продажи</label>
+        <div class="filter-row">
+          <input type="date" id="filter-report-date">
+          <button type="button" id="btn-filter-reports" class="secondary">Показать</button>
+          <button type="button" id="btn-clear-report-filter" class="btn-cancel">Сбросить</button>
+        </div>
+        <p class="meta" style="margin-top:0.6rem;color:#888;font-size:0.85rem;">Если дата не выбрана — показываются все продажи</p>
+      </div>
+
+      <div class="cards">
+        <div class="card stat">
+          <h3>Продано билетов</h3>
+          <p class="big-number" id="stat-tickets">0</p>
+        </div>
+        <div class="card stat">
+          <h3>Выручка</h3>
+          <p class="big-number" id="stat-revenue">0 ₽</p>
+        </div>
+        <div class="card stat">
+          <h3>Средний чек</h3>
+          <p class="big-number" id="stat-avg">0 ₽</p>
+        </div>
+        <div class="card stat">
+          <h3>VIP-билетов</h3>
+          <p class="big-number" id="stat-vip">0</p>
+        </div>
+      </div>
+
+      <h3>Кассовая сводка</h3>
+      <div id="report-cash" class="list"></div>
+
+      <h3>Продажи по фильмам</h3>
+      <div id="report-by-film" class="list"></div>
+
+      <h3>Продажи по сеансам</h3>
+      <div id="report-by-session" class="list"></div>
+
+      <button id="btn-refresh-reports" class="secondary">Обновить отчёты</button>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
